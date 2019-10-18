@@ -1,5 +1,6 @@
 module Parser where
 import Control.Monad
+import Numeric (readFloat)
 import Text.ParserCombinators.Parsec hiding (spaces)
 
 data LispVal = Atom String
@@ -8,6 +9,7 @@ data LispVal = Atom String
              | Number Integer
              | String String
              | Bool Bool
+             | Float Double
 
 escapedChars = do
   char '\\' -- backslash
@@ -31,6 +33,7 @@ readExpr input = case parse parseExpr "list" input of
 
 parseExpr = parseAtom
   <|> parseString
+  <|> try parseFloat
   <|> parseNumber
 
 parseAtom = do
@@ -41,6 +44,12 @@ parseAtom = do
     "#t" -> Bool True
     "#f" -> Bool False
     _ -> Atom atom
+
+parseFloat = do
+  x <- many1 digit
+  char '.'
+  y <- many1 digit
+  return $ Float (fst . head $ readFloat (x++"."++y))
 
 parseNumber = liftM (Number . read) $ many1 digit
 
