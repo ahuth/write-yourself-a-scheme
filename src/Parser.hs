@@ -9,6 +9,16 @@ data LispVal = Atom String
              | String String
              | Bool Bool
 
+escapedChars = do
+  char '\\' -- backslash
+  x <- oneOf "\\\"nrt"
+  return $ case x of
+    '\\' -> x
+    '"' -> x
+    'n' -> '\n'
+    'r' -> '\r'
+    't' -> '\t'
+
 spaces :: Parser ()
 spaces = skipMany1 space
 
@@ -34,6 +44,6 @@ parseNumber = liftM (Number . read) $ many1 digit
 
 parseString = do
   char '"'
-  x <- many (noneOf "\"")
+  x <- many $ escapedChars <|> noneOf "\"\\"
   char '"'
   return $ String x
