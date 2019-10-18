@@ -1,17 +1,8 @@
 module Parser where
 import Control.Monad
+import LispVal
 import Numeric (readFloat)
 import Text.ParserCombinators.Parsec hiding (spaces)
-
-data LispVal = Atom String
-             | List [LispVal]
-             | DottedList [LispVal] LispVal
-             | Number Integer
-             | String String
-             | Bool Bool
-             | Float Double
-
-instance Show LispVal where show = showVal
 
 escapedChars = do
   char '\\' -- backslash
@@ -77,15 +68,3 @@ parseString = do
   x <- many $ escapedChars <|> noneOf "\"\\"
   char '"'
   return $ String x
-
-showVal :: LispVal -> String
-showval (String contents) = "\"" ++ contents ++ "\""
-showVal (Atom name) = name
-showVal (Number contents) = show contents
-showVal (Bool True) = "#t"
-showVal (Bool False) = "#f"
-showVal (List contents) = "(" ++ unwordsList contents ++ ")"
-showVal (DottedList head tail) = "(" ++ unwordsList head ++ " . " ++ showVal tail ++ ")"
-
-unwordsList :: [LispVal] -> String
-unwordsList = unwords . map showVal
