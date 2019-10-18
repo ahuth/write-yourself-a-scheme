@@ -4,4 +4,4 @@
 
 1. `stack setup`
 2. `stack build`
-3. `stack exec write-yourself-a-scheme-exe <CODE>`
+3. `stack exec eval <CODE>`
