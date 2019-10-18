@@ -1,6 +1,7 @@
 module Main where
+import Parser
 import System.Environment
 
 main = do
-  args <- getArgs
-  putStrLn("Hello, " ++ args !! 0)
+  (expr:_) <- getArgs
+  putStrLn (readExpr expr)
