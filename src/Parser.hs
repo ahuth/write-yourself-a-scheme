@@ -29,7 +29,9 @@ readExpr input = case parse parseExpr "list" input of
   Left err -> "No match: " ++ show err
   Right val -> "Found value"
 
-parseExpr = parseAtom <|> parseString <|> parseNumber
+parseExpr = parseAtom
+  <|> parseString
+  <|> parseNumber
 
 parseAtom = do
   first <- letter <|> symbol
