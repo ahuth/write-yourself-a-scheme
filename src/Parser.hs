@@ -35,6 +35,11 @@ parseExpr = parseAtom
   <|> parseString
   <|> try parseFloat
   <|> parseNumber
+  <|> parseQuoted
+  <|> do char '('
+         x <- try parseList <|> parseDottedList
+         char ')'
+         return x
 
 parseAtom = do
   first <- letter <|> symbol
@@ -45,13 +50,25 @@ parseAtom = do
     "#f" -> Bool False
     _ -> Atom atom
 
+parseDottedList = do
+  head <- endBy parseExpr spaces
+  tail <- char '.' >> spaces >> parseExpr
+  return $ DottedList head tail
+
 parseFloat = do
   x <- many1 digit
   char '.'
   y <- many1 digit
   return $ Float (fst . head $ readFloat (x++"."++y))
 
+parseList = liftM List $ sepBy parseExpr spaces
+
 parseNumber = liftM (Number . read) $ many1 digit
+
+parseQuoted = do
+  char '\''
+  x <- parseExpr
+  return $ List [Atom "quote", x]
 
 parseString = do
   char '"'
