@@ -19,7 +19,7 @@ spaces = skipMany1 space
 
 symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
 
-readExpr :: String -> String
+readExpr :: String -> LispVal
 readExpr input = case parse parseExpr "list" input of
   Left err -> String $ "No match: " ++ show err
   Right val -> val
