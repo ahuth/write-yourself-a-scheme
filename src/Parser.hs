@@ -21,8 +21,8 @@ symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
 
 readExpr :: String -> String
 readExpr input = case parse parseExpr "list" input of
-  Left err -> "No match: " ++ show err
-  Right val -> "Found: " ++ show val
+  Left err -> String $ "No match: " ++ show err
+  Right val -> val
 
 parseExpr = parseAtom
   <|> parseString
